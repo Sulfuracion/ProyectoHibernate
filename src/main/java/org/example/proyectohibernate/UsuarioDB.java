@@ -4,6 +4,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,22 +17,82 @@ public class UsuarioDB {
 
     private SessionFactory sessionFactory;
 
-    /**
-     * Constructor que inicializa la sesión de Hibernate.
-     */
-    public void UsuarioDAO() {
-        Configuration configuration = new Configuration().configure();
-        sessionFactory = configuration.buildSessionFactory();
-    }
+
+    private static EntityManagerFactory EMF = Persistence.createEntityManagerFactory("Persistencia");
+    ;
 
     /**
-     * Método para guardar un nuevo usuario en la base de datos.
+     * Método para crear un nuevo usuario en la base de datos.
      *
      * @param nombre    Nombre del usuario.
      * @param apellidos Apellidos del usuario.
      * @param direccion Dirección del usuario.
      */
-    public void crearUsuario(String nombre, String apellidos, String direccion) {
+    public static void crearUsuarioDB(String nombre, String apellidos, String direccion) {
+        EntityManager EM = EMF.createEntityManager();
+        try {
+
+            EM.getTransaction().begin();
+
+            // Crear una nueva instancia de Usuario
+            Usuario usuario = new Usuario(nombre, apellidos, direccion);
+
+            // Guardar el usuario en la base de datos
+            //session.save(usuario);
+            EM.persist(usuario);
+            EM.getTransaction().commit();
+            EM.close();
+
+        } catch (Exception e) {
+
+            e.printStackTrace(); // Imprime la excepción para depuración
+        }
+
+    }
+
+    public static void eliminarUsuarioDB(Usuario u) {
+        EntityManager EM = EMF.createEntityManager();
+        try {
+
+            EM.getTransaction().begin();
+
+            EM.find(Usuario.class,u.getId());
+
+
+            if (u != null) {
+                EM.remove(u);
+                EM.getTransaction().commit();
+                EM.close();
+
+                // Confirmar la transacción
+                System.out.println("Usuario eliminado exitosamente.");
+            } else {
+                System.out.println("No se encontró un usuario con el ID proporcionado.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Imprime la excepción para depuración
+        }
+    }
+/**
+ * Método para obtener todos los usuarios de la base de datos.
+ *
+ * @return Lista de usuarios.
+ */
+    public List<Usuario> obtenerUsuarios() {
+        EntityManager EM = EMF.createEntityManager();
+        EM.getTransaction().begin();
+
+        List<Usuario> usuarios = (ArrayList<Usuario>) EM.createQuery("FROM Entrenador").getResultList();
+        EM.close();
+        return usuarios;
+    }
+
+
+
+
+}
+
+   /* public void crearUsuario(String nombre, String apellidos, String direccion) {
         Session session = sessionFactory.openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -37,24 +101,14 @@ public class UsuarioDB {
 
         transaction.commit();
         session.close();
-    }
+    }*/
 
-    /**
-     * Método para obtener todos los usuarios de la base de datos.
-     *
-     * @return Lista de usuarios.
-     */
-    public List<Usuario> obtenerUsuarios() {
-        Session session = sessionFactory.openSession();
-        List<Usuario> usuarios = session.createQuery("FROM Usuario", Usuario.class).list();
-        session.close();
-        return usuarios;
-    }
+
 
     /**
      * Método para mostrar por separado cada fila de la tabla 'usuario'.
      */
-    public void mostrarUsuariosPorSeparado() {
+   /* public void mostrarUsuariosPorSeparado() {
         List<Usuario> usuarios = obtenerUsuarios();
 
         for (Usuario usuario : usuarios) {
@@ -64,4 +118,4 @@ public class UsuarioDB {
             System.out.println("----------");
         }
     }
-}
+}*/

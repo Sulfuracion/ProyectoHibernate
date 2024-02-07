@@ -7,6 +7,8 @@ module org.example.proyectohibernate {
     requires java.persistence;
     requires org.hibernate.orm.core;
 
-    opens org.example.proyectohibernate to javafx.fxml;
+    opens org.example.proyectohibernate to javafx.fxml,java.sql,java.persintence,org.hibernate.orm.core;
+
     exports org.example.proyectohibernate;
+
 }

@@ -10,6 +10,8 @@ import javafx.scene.control.TextField;
 import java.util.List;
 
 import static org.example.proyectohibernate.Usuario.*;
+import static org.example.proyectohibernate.UsuarioDB.crearUsuarioDB;
+import static org.example.proyectohibernate.UsuarioDB.eliminarUsuarioDB;
 
 
 public class PantallaController {
@@ -43,15 +45,16 @@ public class PantallaController {
 
 
     private UsuarioDB usuarioDB;
+    private Usuario usuario;
 
 
 
     public void eliminarUsuario(ActionEvent event) {
-        //eliminarUsuarioDB();
+        eliminarUsuarioDB(usuario);
     }
 
     public void crearUsuario(ActionEvent event) {
-       crearUsuarioDB(nombreArea.getText(), apellidoArea.getText(), direccionArea.getText());
+        UsuarioDB.crearUsuarioDB(nombreArea.getText(), apellidoArea.getText(), direccionArea.getText());
     }
 
     public void modificarUsuario(ActionEvent event) {
